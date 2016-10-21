@@ -1,5 +1,5 @@
 # This is just train_svhn_minibatch_discrimination.py changed to load MNIST
-# instead of SVHN.
+# instead of SVHN, which is what Tim said was what they did.
 import argparse
 import time
 import numpy as np
@@ -24,7 +24,6 @@ parser.add_argument('--count', type=int, default=100)
 parser.add_argument('--batch_size', type=int, default=100)
 parser.add_argument('--unlabeled_weight', type=float, default=1.)
 parser.add_argument('--learning_rate', type=float, default=0.0003)
-parser.add_argument('--data_dir', type=str, default='/home/tim/data')
 args = parser.parse_args()
 print(args)
 
