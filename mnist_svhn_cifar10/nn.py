@@ -28,8 +28,10 @@ def adam_updates(params, cost, lr=0.001, mom1=0.9, mom2=0.999):
     grads = T.grad(cost, params)
     t = th.shared(np.cast[th.config.floatX](1.))
     for p, g in zip(params, grads):
-        v = th.shared(np.cast[th.config.floatX](p.get_value() * 0.))
-        mg = th.shared(np.cast[th.config.floatX](p.get_value() * 0.))
+        v = th.shared(np.cast[th.config.floatX](p.get_value() * 0.),
+                      broadcastable=p.broadcastable)
+        mg = th.shared(np.cast[th.config.floatX](p.get_value() * 0.),
+                       broadcastable=p.broadcastable)
         v_t = mom1*v + (1. - mom1)*g
         mg_t = mom2*mg + (1. - mom2)*T.square(g)
         v_hat = v_t / (1. - mom1 ** t)
