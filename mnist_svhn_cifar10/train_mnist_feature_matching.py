@@ -5,6 +5,7 @@ import theano as th
 import theano.tensor as T
 import lasagne
 import lasagne.layers as LL
+import plotting
 import time
 import nn
 from theano.sandbox.rng_mrg import MRG_RandomStreams
@@ -92,6 +93,7 @@ init_param = th.function(inputs=[x_lab], outputs=None, updates=init_updates)
 train_batch_disc = th.function(inputs=[x_lab,labels,x_unl,lr], outputs=[loss_lab, loss_unl, train_err], updates=disc_param_updates+disc_avg_updates)
 train_batch_gen = th.function(inputs=[x_unl,lr], outputs=[loss_gen], updates=gen_param_updates)
 test_batch = th.function(inputs=[x_lab,labels], outputs=test_err, givens=disc_avg_givens)
+samplefun = th.function(inputs=[],outputs=gen_dat)
 
 # load MNIST data
 data = np.load('mnist.npz')
@@ -159,3 +161,16 @@ for epoch in range(300):
     # report
     print("Iteration %d, time = %ds, loss_lab = %.4f, loss_unl = %.4f, train err = %.4f, test err = %.4f" % (epoch, time.time()-begin, loss_lab, loss_unl, train_err, test_err))
     sys.stdout.flush()
+
+
+    # generate samples from the model
+    sample_x = samplefun()
+    img_bhwc = sample_x[:100].reshape(-1, 28, 28)
+    img_tile = plotting.img_tile(img_bhwc, aspect_ratio=1.0, border_color=1.0, stretch=True)
+    img = plotting.plot_img(img_tile, title='MNIST samples', cmap='gray')
+    plotting.plt.savefig("mnist_sample_feature_match.png")
+    plotting.plt.close('all')
+
+    # save params
+    np.savez('disc_params.npz', *[p.get_value() for p in disc_params])
+    np.savez('gen_params.npz', *[p.get_value() for p in gen_params])

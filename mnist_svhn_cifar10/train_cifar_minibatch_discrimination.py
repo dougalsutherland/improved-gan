@@ -176,7 +176,7 @@ for epoch in range(1200):
     plotting.plt.close('all')
     
     # save params
-    #np.savez('disc_params.npz',*[p.get_value() for p in disc_params])
-    #np.savez('gen_params.npz',*[p.get_value() for p in gen_params])
+    np.savez('disc_params.npz',*[p.get_value() for p in disc_params])
+    np.savez('gen_params.npz',*[p.get_value() for p in gen_params])
 
 

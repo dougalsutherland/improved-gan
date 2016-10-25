@@ -1,3 +1,4 @@
+from __future__ import print_function, division
 import argparse
 import time
 import numpy as np
@@ -9,6 +10,7 @@ import lasagne.layers as ll
 from lasagne.init import Normal
 from lasagne.layers import dnn
 import nn
+import os
 import sys
 import plotting
 import cifar10_data
@@ -21,7 +23,7 @@ parser.add_argument('--count', default=400)
 parser.add_argument('--batch_size', default=100)
 parser.add_argument('--unlabeled_weight', type=float, default=1.)
 parser.add_argument('--learning_rate', type=float, default=0.0003)
-parser.add_argument('--data_dir', type=str, default='/home/tim/data/cifar-10-python')
+parser.add_argument('--data_dir', type=str, default=os.path.join(os.path.dirname(__file__), 'data-dir'))
 args = parser.parse_args()
 print(args)
 
@@ -184,5 +186,5 @@ for epoch in range(1200):
     plotting.plt.savefig("cifar_sample_feature_match.png")
 
     # save params
-    #np.savez('disc_params.npz', *[p.get_value() for p in disc_params])
-    #np.savez('gen_params.npz', *[p.get_value() for p in gen_params])
+    np.savez('disc_params.npz', *[p.get_value() for p in disc_params])
+    np.savez('gen_params.npz', *[p.get_value() for p in gen_params])

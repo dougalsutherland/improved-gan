@@ -1,3 +1,4 @@
+from __future__ import print_function
 # This is just train_svhn_minibatch_discrimination.py changed to load MNIST
 # instead of SVHN, which is what Tim said was what they did.
 # I then hacked it to take out all the label-related bits.
@@ -75,6 +76,8 @@ disc_layers.append(nn.weight_norm(ll.NINLayer(disc_layers[-1], num_units=192, W=
 disc_layers.append(ll.GlobalPoolLayer(disc_layers[-1]))
 disc_layers.append(nn.MinibatchLayer(disc_layers[-1], num_kernels=100))
 disc_layers.append(nn.weight_norm(ll.DenseLayer(disc_layers[-1], num_units=1, W=Normal(0.05), nonlinearity=None), train_g=True, init_stdv=0.1))
+# NOTE: changed from a 10-output thing with an implicit generated class
+#       to a standard single logistic regression
 
 # costs
 x_unl = T.tensor4()

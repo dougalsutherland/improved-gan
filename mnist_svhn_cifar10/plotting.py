@@ -4,9 +4,9 @@ matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 
 # Plot image examples.
-def plot_img(img, title):
+def plot_img(img, title, **kwargs):
     plt.figure()
-    plt.imshow(img, interpolation='nearest')
+    plt.imshow(img, interpolation='nearest', **kwargs)
     plt.title(title)
     plt.axis('off')
     plt.tight_layout()
