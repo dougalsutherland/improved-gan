@@ -1,5 +1,6 @@
 # This is just train_svhn_minibatch_discrimination.py changed to load MNIST
 # instead of SVHN, which is what Tim said was what they did.
+# Additionally sets the labeled loss to 0.
 import argparse
 import time
 import numpy as np
@@ -12,6 +13,7 @@ from lasagne.init import Normal
 from lasagne.layers import dnn
 import nn
 import os
+import shutil
 import sys
 import scipy
 import scipy.misc
@@ -101,7 +103,7 @@ output_before_softmax_gen = ll.get_output(disc_layers[-1], gen_dat, deterministi
 l_lab = output_before_softmax_lab[T.arange(args.batch_size),labels]
 l_unl = nn.log_sum_exp(output_before_softmax_unl)
 l_gen = nn.log_sum_exp(output_before_softmax_gen)
-loss_lab = -T.mean(l_lab) + T.mean(T.mean(nn.log_sum_exp(output_before_softmax_lab)))
+loss_lab = 0 # -T.mean(l_lab) + T.mean(T.mean(nn.log_sum_exp(output_before_softmax_lab)))
 loss_unl = -0.5*T.mean(l_unl) + 0.5*T.mean(T.nnet.softplus(l_unl)) + 0.5*T.mean(T.nnet.softplus(l_gen))
 
 train_err = T.mean(T.neq(T.argmax(output_before_softmax_lab,axis=1),labels))
@@ -193,13 +195,16 @@ for epoch in range(900):
     # sample
     imgs = samplefun()
     imgs = np.transpose(imgs[:100,], (0, 2, 3, 1))
-    imgs = [imgs[i, :, :, :] for i in range(100)]
     rows = []
     for i in range(10):
         rows.append(np.concatenate(imgs[i::10], 1))
     imgs = np.concatenate(rows, 0)
-    scipy.misc.imsave("mnist_sample_minibatch.png", imgs)
+    scipy.misc.imsave("{}_mnist_sample_minibatch_unl.png".format(epoch), imgs.clip(0, 1))
 
     # save params
     np.savez('disc_params.npz',*[p.get_value() for p in disc_params])
     np.savez('gen_params.npz',*[p.get_value() for p in gen_params])
+
+    if epoch % 10 == 0:
+        shutil.copy2('disc_params.npz', '{}_disc_params.npz'.format(epoch))
+        shutil.copy2('gen_params.npz', '{}_gen_params.npz'.format(epoch))

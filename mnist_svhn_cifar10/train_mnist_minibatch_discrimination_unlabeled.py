@@ -14,6 +14,7 @@ from lasagne.init import Normal
 from lasagne.layers import dnn
 import nn
 import os
+import shutil
 import sys
 import scipy
 import scipy.misc
@@ -142,8 +143,13 @@ for epoch in range(900):
     for i in range(10):
         rows.append(np.concatenate(imgs[i::10], 1))
     imgs = np.concatenate(rows, 0)
-    scipy.misc.imsave("mnist_sample_minibatch_unl.png", imgs.clip(0, 1))
+    scipy.misc.imsave("{}_mnist_sample_minibatch_unl.png".format(epoch), imgs.clip(0, 1))
 
     # save params
     np.savez('disc_params.npz',*[p.get_value() for p in disc_params])
     np.savez('gen_params.npz',*[p.get_value() for p in gen_params])
+
+    if epoch % 10 == 0:
+        shutil.copy2('disc_params.npz', '{}_disc_params.npz'.format(epoch))
+        shutil.copy2('gen_params.npz', '{}_gen_params.npz'.format(epoch))
+
