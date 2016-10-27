@@ -26,7 +26,7 @@ parser.add_argument('--count', type=int, default=100)
 parser.add_argument('--batch_size', type=int, default=100)
 parser.add_argument('--unlabeled_weight', type=float, default=1.)
 parser.add_argument('--learning_rate', type=float, default=0.0003)
-g = parser.add_mutually_exclive_argument_group()
+g = parser.add_mutually_exclusive_group()
 g.add_argument('--scale-full', action='store_true', default=False)
 g.add_argument('--scale-zero', dest='scale_full', action='store_false')
 args = parser.parse_args()
@@ -103,7 +103,7 @@ output_before_softmax_gen = ll.get_output(disc_layers[-1], gen_dat, deterministi
 l_lab = output_before_softmax_lab[T.arange(args.batch_size),labels]
 l_unl = nn.log_sum_exp(output_before_softmax_unl)
 l_gen = nn.log_sum_exp(output_before_softmax_gen)
-loss_lab = 0 # -T.mean(l_lab) + T.mean(T.mean(nn.log_sum_exp(output_before_softmax_lab)))
+loss_lab = 0 *( -T.mean(l_lab) + T.mean(T.mean(nn.log_sum_exp(output_before_softmax_lab))) )
 loss_unl = -0.5*T.mean(l_unl) + 0.5*T.mean(T.nnet.softplus(l_unl)) + 0.5*T.mean(T.nnet.softplus(l_gen))
 
 train_err = T.mean(T.neq(T.argmax(output_before_softmax_lab,axis=1),labels))
